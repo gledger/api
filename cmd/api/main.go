@@ -32,7 +32,7 @@ func main() {
 	svc := gledger.NewAccountService(saveAccount(db), allAccounts(db))
 	txnSvc := gledger.NewTransactionService(
 		saveTransaction(db),
-		//transactionsForAccount(db),
+		transactionsForAccount(db),
 	)
 
 	router.HandleFunc(
@@ -63,6 +63,16 @@ func main() {
 			encodeResponse,
 		).ServeHTTP,
 	).Methods("POST")
+
+	router.HandleFunc(
+		"/accounts/{uuid}/transactions",
+		httptransport.NewServer(
+			ctx,
+			makeReadAccountTransactionsEndpoint(txnSvc),
+			decodeReadAccountTransactionsRequest,
+			encodeResponse,
+		).ServeHTTP,
+	).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
