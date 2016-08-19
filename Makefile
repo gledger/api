@@ -1,4 +1,4 @@
 run:
-	go run cmd/api/*.go --databaseUri="${DATABASE_URL}"
+	go run cmd/api/*.go
 
 .PHONY: run

@@ -2,10 +2,10 @@ package main
 
 import (
 	"database/sql"
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
@@ -17,9 +17,12 @@ import (
 )
 
 func main() {
-	var pgUri string
-	flag.StringVar(&pgUri, "databaseUri", "", "Database URI. Required")
-	flag.Parse()
+	port := os.Getenv("PORT")
+	pgUri := os.Getenv("DATABASE_URL")
+
+	if port == "" {
+		port = "8080"
+	}
 
 	fmt.Printf("Connecting to %s\n", pgUri)
 	pg, err := sql.Open("postgres", pgUri)
@@ -84,7 +87,7 @@ func main() {
 		).ServeHTTP,
 	).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }
 
 func emptyRequest(context.Context, *http.Request) (interface{}, error) {
