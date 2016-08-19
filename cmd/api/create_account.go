@@ -1,6 +1,9 @@
 package main
 
 import (
+	"encoding/json"
+	"net/http"
+
 	"github.com/go-kit/kit/endpoint"
 	"golang.org/x/net/context"
 
@@ -38,4 +41,12 @@ type createAccountResponse struct {
 	createAccountRequest
 
 	Active bool `json:"active"`
+}
+
+func decodeCreateAccountRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var request createAccountRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		return nil, err
+	}
+	return request, nil
 }
