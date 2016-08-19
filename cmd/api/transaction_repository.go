@@ -2,7 +2,9 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 
+	"github.com/lib/pq"
 	"github.com/pkg/errors"
 
 	"github.com/zombor/gledger"
@@ -15,6 +17,12 @@ func saveTransaction(db *sql.DB) func(gledger.Transaction) error {
 			t.Uuid, t.AccountUuid, t.OccurredAt, t.Payee, t.Amount, t.Cleared, t.Reconciled,
 		)
 
+		if pqErr, ok := err.(*pq.Error); ok {
+			if pqErr.Code == ForeignKeyViolation {
+				return notFoundError(fmt.Sprintf("Account %s not found", t.AccountUuid))
+			}
+		}
+
 		return errors.Wrap(err, "error writing transaction")
 	}
 }
@@ -22,6 +30,12 @@ func saveTransaction(db *sql.DB) func(gledger.Transaction) error {
 func transactionsForAccount(db *sql.DB) func(string) ([]gledger.Transaction, error) {
 	return func(u string) ([]gledger.Transaction, error) {
 		var transactions []gledger.Transaction
+
+		var uuid string
+		err := db.QueryRow(`SELECT account_uuid FROM accounts WHERE account_uuid = $1`, u).Scan(&uuid)
+		if err == sql.ErrNoRows {
+			return transactions, notFoundError(fmt.Sprintf("Account %s not found", u))
+		}
 
 		rows, err := db.Query(
 			`SELECT transaction_uuid, account_uuid, occurred_at, payee, amount, cleared, reconciled FROM transactions where account_uuid = $1`,

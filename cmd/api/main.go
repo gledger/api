@@ -20,7 +20,7 @@ func main() {
 	flag.StringVar(&pgUri, "databaseUri", "", "Database URI. Required")
 	flag.Parse()
 
-	fmt.Printf("Connecting to %s", pgUri)
+	fmt.Printf("Connecting to %s\n", pgUri)
 	db, err := sql.Open("postgres", pgUri)
 	if err != nil {
 		panic(err)
@@ -42,6 +42,7 @@ func main() {
 			makeCreateAccountEndpoint(svc),
 			decodeCreateAccountRequest,
 			encodeResponse,
+			[]httptransport.ServerOption{httptransport.ServerErrorEncoder(errorEncoder)}...,
 		).ServeHTTP,
 	).Methods("POST")
 	router.HandleFunc(
@@ -51,6 +52,7 @@ func main() {
 			makeAllAccountsEndpoint(svc),
 			emptyRequest,
 			encodeResponse,
+			[]httptransport.ServerOption{httptransport.ServerErrorEncoder(errorEncoder)}...,
 		).ServeHTTP,
 	).Methods("GET")
 
@@ -61,6 +63,7 @@ func main() {
 			makeCreateTransactionEndpoint(txnSvc),
 			decodeCreateTransactionRequest,
 			encodeResponse,
+			[]httptransport.ServerOption{httptransport.ServerErrorEncoder(errorEncoder)}...,
 		).ServeHTTP,
 	).Methods("POST")
 
@@ -71,6 +74,7 @@ func main() {
 			makeReadAccountTransactionsEndpoint(txnSvc),
 			decodeReadAccountTransactionsRequest,
 			encodeResponse,
+			[]httptransport.ServerOption{httptransport.ServerErrorEncoder(errorEncoder)}...,
 		).ServeHTTP,
 	).Methods("GET")
 
