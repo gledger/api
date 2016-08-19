@@ -14,22 +14,22 @@ func makeReadAccountTransactionsEndpoint(svc gledger.TransactionService) endpoin
 		req := request.(readAccountTransactionsRequest)
 		ts, err := svc.AllForAccount(req.AccountUuid)
 
-		res := make([]createTransactionResponse, len(ts), len(ts))
+		res := make([]jsonApiTransactionResource, len(ts), len(ts))
 		for i, t := range ts {
-			res[i] = createTransactionResponse{
-				Uuid:       t.Uuid,
-				Reconciled: t.Reconciled,
-				createTransactionRequest: createTransactionRequest{
-					AccountUuid: t.AccountUuid,
-					OccurredAt:  Date(t.OccurredAt),
-					Payee:       t.Payee,
-					Amount:      t.Amount,
-					Cleared:     t.Cleared,
+			res[i] = jsonApiTransactionResource{
+				Id:   t.Uuid,
+				Type: "transactions",
+				Attributes: jsonApiTransactionResourceAttributes{
+					Payee:      t.Payee,
+					Amount:     t.Amount,
+					OccurredAt: Date(t.OccurredAt),
+					Cleared:    t.Cleared,
+					Reconciled: t.Reconciled,
 				},
 			}
 		}
 
-		return res, err
+		return jsonApiDocument{Data: res}, err
 	}
 }
 
