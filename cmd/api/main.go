@@ -50,7 +50,7 @@ func main() {
 			ctx,
 			makeCreateAccountEndpoint(svc),
 			decodeCreateAccountRequest,
-			encodeResponse,
+			created(encodeResponse),
 			httpOptions...,
 		).ServeHTTP,
 	).Methods("POST")
@@ -71,7 +71,7 @@ func main() {
 			ctx,
 			makeCreateTransactionEndpoint(txnSvc),
 			decodeCreateTransactionRequest,
-			encodeResponse,
+			created(encodeResponse),
 			httpOptions...,
 		).ServeHTTP,
 	).Methods("POST")
