@@ -18,6 +18,11 @@ func errorEncoder(_ context.Context, err error, w http.ResponseWriter) {
 			NotFound() bool
 		}); ok && nfe.NotFound() {
 			code = http.StatusNotFound
+		} else {
+			switch e.Domain {
+			case httptransport.DomainDecode:
+				code = http.StatusBadRequest
+			}
 		}
 	}
 
