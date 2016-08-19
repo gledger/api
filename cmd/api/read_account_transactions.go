@@ -26,6 +26,14 @@ func makeReadAccountTransactionsEndpoint(svc gledger.TransactionService) endpoin
 					Cleared:    t.Cleared,
 					Reconciled: t.Reconciled,
 				},
+				Relationships: jsonApiTransactionsRelationships{
+					Account: jsonApiTransactionsRelationshipsAccount{
+						Data: jsonApiAccountResource{
+							Type: "accounts",
+							Id:   t.AccountUuid,
+						},
+					},
+				},
 			}
 		}
 
