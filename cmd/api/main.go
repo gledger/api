@@ -39,6 +39,8 @@ func main() {
 		db.TransactionsForAccount(pg),
 	)
 
+	httpOptions := []httptransport.ServerOption{httptransport.ServerErrorEncoder(errorEncoder)}
+
 	router.HandleFunc(
 		"/accounts",
 		httptransport.NewServer(
@@ -46,7 +48,7 @@ func main() {
 			makeCreateAccountEndpoint(svc),
 			decodeCreateAccountRequest,
 			encodeResponse,
-			[]httptransport.ServerOption{httptransport.ServerErrorEncoder(errorEncoder)}...,
+			httpOptions...,
 		).ServeHTTP,
 	).Methods("POST")
 	router.HandleFunc(
@@ -56,7 +58,7 @@ func main() {
 			makeAllAccountsEndpoint(svc),
 			emptyRequest,
 			encodeResponse,
-			[]httptransport.ServerOption{httptransport.ServerErrorEncoder(errorEncoder)}...,
+			httpOptions...,
 		).ServeHTTP,
 	).Methods("GET")
 
@@ -67,7 +69,7 @@ func main() {
 			makeCreateTransactionEndpoint(txnSvc),
 			decodeCreateTransactionRequest,
 			encodeResponse,
-			[]httptransport.ServerOption{httptransport.ServerErrorEncoder(errorEncoder)}...,
+			httpOptions...,
 		).ServeHTTP,
 	).Methods("POST")
 
@@ -78,7 +80,7 @@ func main() {
 			makeReadAccountTransactionsEndpoint(txnSvc),
 			decodeReadAccountTransactionsRequest,
 			encodeResponse,
-			[]httptransport.ServerOption{httptransport.ServerErrorEncoder(errorEncoder)}...,
+			httpOptions...,
 		).ServeHTTP,
 	).Methods("GET")
 
