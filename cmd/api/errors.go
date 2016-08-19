@@ -5,13 +5,8 @@ import (
 	"net/http"
 
 	httptransport "github.com/go-kit/kit/transport/http"
-	"github.com/lib/pq"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
-)
-
-const (
-	ForeignKeyViolation pq.ErrorCode = "23503"
 )
 
 func errorEncoder(_ context.Context, err error, w http.ResponseWriter) {
@@ -33,8 +28,3 @@ func errorEncoder(_ context.Context, err error, w http.ResponseWriter) {
 type errorWrapper struct {
 	Error string `json:"error"`
 }
-
-type notFoundError string
-
-func (nfe notFoundError) Error() string { return string(nfe) }
-func (notFoundError) NotFound() bool    { return true }

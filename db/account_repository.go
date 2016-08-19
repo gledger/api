@@ -1,4 +1,4 @@
-package main
+package db
 
 import (
 	"database/sql"
@@ -8,14 +8,14 @@ import (
 	"github.com/zombor/gledger"
 )
 
-func saveAccount(db *sql.DB) func(gledger.Account) error {
+func SaveAccount(db *sql.DB) func(gledger.Account) error {
 	return func(a gledger.Account) error {
 		_, err := db.Exec(`INSERT INTO accounts VALUES ($1, $2, $3, $4, now(), now())`, a.Uuid, a.Name, a.Type, a.Active)
 		return errors.Wrap(err, "error writing account")
 	}
 }
 
-func allAccounts(db *sql.DB) func() ([]gledger.Account, error) {
+func AllAccounts(db *sql.DB) func() ([]gledger.Account, error) {
 	return func() ([]gledger.Account, error) {
 		var accounts []gledger.Account
 

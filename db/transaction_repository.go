@@ -1,4 +1,4 @@
-package main
+package db
 
 import (
 	"database/sql"
@@ -10,7 +10,7 @@ import (
 	"github.com/zombor/gledger"
 )
 
-func saveTransaction(db *sql.DB) func(gledger.Transaction) error {
+func SaveTransaction(db *sql.DB) func(gledger.Transaction) error {
 	return func(t gledger.Transaction) error {
 		_, err := db.Exec(
 			`INSERT INTO transactions VALUES ($1, $2, $3, $4, $5, $6, $7, now(), now())`,
@@ -27,7 +27,7 @@ func saveTransaction(db *sql.DB) func(gledger.Transaction) error {
 	}
 }
 
-func transactionsForAccount(db *sql.DB) func(string) ([]gledger.Transaction, error) {
+func TransactionsForAccount(db *sql.DB) func(string) ([]gledger.Transaction, error) {
 	return func(u string) ([]gledger.Transaction, error) {
 		var transactions []gledger.Transaction
 

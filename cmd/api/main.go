@@ -13,6 +13,7 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/zombor/gledger"
+	"github.com/zombor/gledger/db"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 	flag.Parse()
 
 	fmt.Printf("Connecting to %s\n", pgUri)
-	db, err := sql.Open("postgres", pgUri)
+	pg, err := sql.Open("postgres", pgUri)
 	if err != nil {
 		panic(err)
 	}
@@ -29,10 +30,13 @@ func main() {
 	router := mux.NewRouter()
 
 	ctx := context.Background()
-	svc := gledger.NewAccountService(saveAccount(db), allAccounts(db))
+	svc := gledger.NewAccountService(
+		db.SaveAccount(pg),
+		db.AllAccounts(pg),
+	)
 	txnSvc := gledger.NewTransactionService(
-		saveTransaction(db),
-		transactionsForAccount(db),
+		db.SaveTransaction(pg),
+		db.TransactionsForAccount(pg),
 	)
 
 	router.HandleFunc(
