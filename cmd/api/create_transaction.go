@@ -23,15 +23,17 @@ func makeCreateTransactionEndpoint(svc gledger.TransactionService) endpoint.Endp
 			Cleared:     req.Cleared,
 		})
 
-		return createTransactionResponse{
-			Uuid:       t.Uuid,
-			Reconciled: t.Reconciled,
-			createTransactionRequest: createTransactionRequest{
-				AccountUuid: t.AccountUuid,
-				OccurredAt:  Date(t.OccurredAt),
-				Payee:       t.Payee,
-				Amount:      t.Amount,
-				Cleared:     t.Cleared,
+		return jsonApiDocument{
+			Data: jsonApiTransactionResource{
+				Type: "transactions",
+				Id:   t.Uuid,
+				Attributes: jsonApiTransactionResourceAttributes{
+					OccurredAt: Date(t.OccurredAt),
+					Payee:      t.Payee,
+					Amount:     t.Amount,
+					Cleared:    t.Cleared,
+					Reconciled: t.Reconciled,
+				},
 			},
 		}, err
 	}
@@ -43,14 +45,6 @@ type createTransactionRequest struct {
 	Payee       string `json:"payee"`
 	Amount      int64  `json:"amount"`
 	Cleared     bool   `json:"cleared"`
-}
-
-type createTransactionResponse struct {
-	Uuid string `json:"uuid"`
-
-	createTransactionRequest
-
-	Reconciled bool `json:"reconciled"`
 }
 
 func decodeCreateTransactionRequest(_ context.Context, r *http.Request) (interface{}, error) {
