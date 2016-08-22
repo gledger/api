@@ -20,11 +20,12 @@ func makeReadAccountTransactionsEndpoint(svc gledger.TransactionService) endpoin
 				Id:   t.Uuid,
 				Type: "transactions",
 				Attributes: jsonApiTransactionResourceAttributes{
-					Payee:      t.Payee,
-					Amount:     t.Amount,
-					OccurredAt: Date(t.OccurredAt),
-					Cleared:    t.Cleared,
-					Reconciled: t.Reconciled,
+					Payee:        t.Payee,
+					Amount:       t.Amount,
+					RollingTotal: t.RollingTotal,
+					OccurredAt:   Date(t.OccurredAt),
+					Cleared:      t.Cleared,
+					Reconciled:   t.Reconciled,
 				},
 				Relationships: jsonApiTransactionsRelationships{
 					Account: jsonApiTransactionsRelationshipsAccount{

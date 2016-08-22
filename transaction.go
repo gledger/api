@@ -9,7 +9,7 @@ import (
 type Transaction struct {
 	Uuid, AccountUuid, Payee string
 	OccurredAt               time.Time
-	Amount                   int64
+	Amount, RollingTotal     int64
 	Cleared, Reconciled      bool
 }
 

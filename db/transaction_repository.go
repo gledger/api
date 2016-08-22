@@ -38,7 +38,16 @@ func TransactionsForAccount(db *sql.DB) func(string) ([]gledger.Transaction, err
 		}
 
 		rows, err := db.Query(
-			`SELECT transaction_uuid, account_uuid, occurred_at, payee, amount, cleared, reconciled FROM transactions where account_uuid = $1`,
+			`SELECT
+				transaction_uuid,
+				account_uuid,
+				occurred_at,
+				payee,
+				amount,
+				sum(amount) OVER (PARTITION BY account_uuid ORDER BY occurred_at, created_at),
+				cleared,
+				reconciled
+			FROM transactions where account_uuid = $1`,
 			u,
 		)
 		if err != nil {
@@ -48,7 +57,7 @@ func TransactionsForAccount(db *sql.DB) func(string) ([]gledger.Transaction, err
 
 		for rows.Next() {
 			var t gledger.Transaction
-			err := rows.Scan(&t.Uuid, &t.AccountUuid, &t.OccurredAt, &t.Payee, &t.Amount, &t.Cleared, &t.Reconciled)
+			err := rows.Scan(&t.Uuid, &t.AccountUuid, &t.OccurredAt, &t.Payee, &t.Amount, &t.RollingTotal, &t.Cleared, &t.Reconciled)
 			if err != nil {
 				return transactions, errors.Wrapf(err, "error scanning getting transactions for %s", u)
 			}

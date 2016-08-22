@@ -12,11 +12,12 @@ type jsonApiTransactionResource struct {
 }
 
 type jsonApiTransactionResourceAttributes struct {
-	Payee      string `json:"payee"`
-	Amount     int64  `json:"amount"`
-	OccurredAt Date   `json:"occurred_at"`
-	Cleared    bool   `json:"cleared"`
-	Reconciled bool   `json:"reconciled"`
+	Payee        string `json:"payee"`
+	Amount       int64  `json:"amount"`
+	RollingTotal int64  `json:"rolling_total"`
+	OccurredAt   Date   `json:"occurred_at"`
+	Cleared      bool   `json:"cleared"`
+	Reconciled   bool   `json:"reconciled"`
 }
 
 type jsonApiTransactionsRelationships struct {
