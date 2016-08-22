@@ -20,15 +20,22 @@ type jsonApiTransactionResourceAttributes struct {
 	Reconciled   bool   `json:"reconciled"`
 }
 
+type jsonApiAccountResource struct {
+	Type       string                            `json:"type"`
+	Id         string                            `json:"id"`
+	Attributes *jsonApiAccountResourceAttributes `json:"attributes,omitempty"`
+}
+
+type jsonApiAccountResourceAttributes struct {
+	Name   string `json:"name"`
+	Type   string `json:"type"`
+	Active bool   `json:"active"`
+}
+
 type jsonApiTransactionsRelationships struct {
 	Account jsonApiTransactionsRelationshipsAccount `json:"account"`
 }
 
 type jsonApiTransactionsRelationshipsAccount struct {
 	Data jsonApiAccountResource `json:"data"`
-}
-
-type jsonApiAccountResource struct {
-	Type string `json:"type"`
-	Id   string `json:"id"`
 }
