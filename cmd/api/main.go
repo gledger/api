@@ -10,6 +10,7 @@ import (
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/rs/cors"
 	"golang.org/x/net/context"
 
 	"github.com/zombor/gledger"
@@ -87,7 +88,8 @@ func main() {
 		).ServeHTTP,
 	).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	handler := cors.Default().Handler(router)
+	log.Fatal(http.ListenAndServe(":"+port, handler))
 }
 
 func emptyRequest(context.Context, *http.Request) (interface{}, error) {
