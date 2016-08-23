@@ -21,9 +21,10 @@ type jsonApiTransactionResourceAttributes struct {
 }
 
 type jsonApiAccountResource struct {
-	Type       string                            `json:"type"`
-	Id         string                            `json:"id"`
-	Attributes *jsonApiAccountResourceAttributes `json:"attributes,omitempty"`
+	Type          string                               `json:"type"`
+	Id            string                               `json:"id"`
+	Attributes    *jsonApiAccountResourceAttributes    `json:"attributes,omitempty"`
+	Relationships *jsonApiAccountResourceRelationships `json:"relationships,omitempty"`
 }
 
 type jsonApiAccountResourceAttributes struct {
@@ -34,6 +35,10 @@ type jsonApiAccountResourceAttributes struct {
 
 type jsonApiTransactionsRelationships struct {
 	Account jsonApiTransactionsRelationshipsAccount `json:"account"`
+}
+
+type jsonApiAccountResourceRelationships struct {
+	Transactions map[string]map[string]string `json:"transactions"`
 }
 
 type jsonApiTransactionsRelationshipsAccount struct {

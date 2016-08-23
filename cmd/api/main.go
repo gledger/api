@@ -37,6 +37,7 @@ func main() {
 	svc := gledger.NewAccountService(
 		db.SaveAccount(pg),
 		db.AllAccounts(pg),
+		db.ReadAccount(pg),
 	)
 	txnSvc := gledger.NewTransactionService(
 		db.SaveTransaction(pg),
@@ -67,6 +68,16 @@ func main() {
 	).Methods("GET")
 
 	router.HandleFunc(
+		"/accounts/{uuid}",
+		httptransport.NewServer(
+			ctx,
+			makeReadAccountEndpoint(svc),
+			decodeReadAccountRequest,
+			encodeResponse,
+			httpOptions...,
+		).ServeHTTP,
+	).Methods("GET")
+	router.HandleFunc(
 		"/accounts/{uuid}/transactions",
 		httptransport.NewServer(
 			ctx,
@@ -88,7 +99,9 @@ func main() {
 		).ServeHTTP,
 	).Methods("GET")
 
-	handler := cors.Default().Handler(router)
+	handler := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://localhost:4200", "https://gledger-web.herokuapp.com"},
+	}).Handler(router)
 	log.Fatal(http.ListenAndServe(":"+port, handler))
 }
 
