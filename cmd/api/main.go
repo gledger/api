@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
@@ -101,7 +102,12 @@ func main() {
 
 	handler := cors.New(cors.Options{
 		AllowedOrigins: []string{"http://localhost:4200", "https://gledger-web.herokuapp.com"},
-	}).Handler(router)
+	}).Handler(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		start := time.Now()
+		router.ServeHTTP(res, req)
+		end := time.Now()
+		log.Printf("%s %s %s\n", req.Method, req.URL, end.Sub(start))
+	}))
 	log.Fatal(http.ListenAndServe(":"+port, handler))
 }
 
