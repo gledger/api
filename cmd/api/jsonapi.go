@@ -28,9 +28,10 @@ type jsonApiAccountResource struct {
 }
 
 type jsonApiAccountResourceAttributes struct {
-	Name   string `json:"name"`
-	Type   string `json:"type"`
-	Active bool   `json:"active"`
+	Name    string `json:"name"`
+	Type    string `json:"type"`
+	Active  bool   `json:"active"`
+	Balance int64  `json:"balance"`
 }
 
 type jsonApiTransactionsRelationships struct {
