@@ -17,37 +17,37 @@ func makeCreateTransactionEndpoint(svc gledger.TransactionService) endpoint.Endp
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		if req, ok := request.(createTransactionRequest); ok {
 			t, err := svc.Create(gledger.Transaction{
-				AccountUuid: req.Data.Relationships.Account.Data.Id,
+				AccountUUID: req.Data.Relationships.Account.Data.ID,
 				OccurredAt:  time.Time(req.Data.Attributes.OccurredAt),
 				Payee:       req.Data.Attributes.Payee,
 				Amount:      req.Data.Attributes.Amount,
 				Cleared:     req.Data.Attributes.Cleared,
 			})
 
-			return jsonApiDocument{
-				Data: jsonApiTransactionResource{
+			return jsonAPIDocument{
+				Data: jsonAPITransactionResource{
 					Type: "transactions",
-					Id:   t.Uuid,
-					Attributes: jsonApiTransactionResourceAttributes{
+					ID:   t.UUID,
+					Attributes: jsonAPITransactionResourceAttributes{
 						OccurredAt: Date(t.OccurredAt),
 						Payee:      t.Payee,
 						Amount:     t.Amount,
 						Cleared:    t.Cleared,
 						Reconciled: t.Reconciled,
 					},
-					Relationships: jsonApiTransactionsRelationships{
-						Account: jsonApiTransactionsRelationshipsAccount{
-							Data: jsonApiAccountResource{
+					Relationships: jsonAPITransactionsRelationships{
+						Account: jsonAPITransactionsRelationshipsAccount{
+							Data: jsonAPIAccountResource{
 								Type: "accounts",
-								Id:   t.AccountUuid,
+								ID:   t.AccountUUID,
 							},
 						},
 					},
 				},
 			}, err
-		} else {
-			return nil, errors.New("request was not createTransactionRequest")
 		}
+
+		return nil, errors.New("request was not createTransactionRequest")
 	}
 }
 
@@ -61,7 +61,7 @@ func decodeCreateTransactionRequest(_ context.Context, r *http.Request) (interfa
 	}
 
 	request.Data.Type = "transactions"
-	request.Data.Relationships.Account.Data.Id = vars["uuid"]
+	request.Data.Relationships.Account.Data.ID = vars["uuid"]
 	request.Data.Relationships.Account.Data.Type = "accounts"
 
 	if request.Data.Attributes.Payee == "" {
@@ -78,5 +78,5 @@ func decodeCreateTransactionRequest(_ context.Context, r *http.Request) (interfa
 }
 
 type createTransactionRequest struct {
-	Data jsonApiTransactionResource `json:"data"`
+	Data jsonAPITransactionResource `json:"data"`
 }

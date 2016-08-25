@@ -19,11 +19,11 @@ func makeCreateAccountEndpoint(svc gledger.AccountService) endpoint.Endpoint {
 			Active: true,
 		})
 
-		return jsonApiDocument{
-			Data: jsonApiAccountResource{
+		return jsonAPIDocument{
+			Data: jsonAPIAccountResource{
 				Type: "accounts",
-				Id:   a.Uuid,
-				Attributes: &jsonApiAccountResourceAttributes{
+				ID:   a.UUID,
+				Attributes: &jsonAPIAccountResourceAttributes{
 					Name:   a.Name,
 					Type:   a.Type,
 					Active: a.Active,
@@ -34,7 +34,7 @@ func makeCreateAccountEndpoint(svc gledger.AccountService) endpoint.Endpoint {
 }
 
 type createAccountRequest struct {
-	Data jsonApiAccountResource `json:"data"`
+	Data jsonAPIAccountResource `json:"data"`
 }
 
 func decodeCreateAccountRequest(_ context.Context, r *http.Request) (interface{}, error) {

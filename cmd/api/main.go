@@ -20,14 +20,14 @@ import (
 
 func main() {
 	port := os.Getenv("PORT")
-	pgUri := os.Getenv("DATABASE_URL")
+	pgURI := os.Getenv("DATABASE_URL")
 
 	if port == "" {
 		port = "8080"
 	}
 
-	fmt.Printf("Connecting to %s\n", pgUri)
-	pg, err := sql.Open("postgres", pgUri)
+	fmt.Printf("Connecting to %s\n", pgURI)
+	pg, err := sql.Open("postgres", pgURI)
 	if err != nil {
 		panic(err)
 	}

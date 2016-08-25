@@ -3,7 +3,7 @@ package gledger
 import "github.com/twinj/uuid"
 
 type Account struct {
-	Uuid, Name, Type string
+	UUID, Name, Type string
 	Balance          int64
 	Active           bool
 }
@@ -29,8 +29,8 @@ type accountService struct {
 }
 
 func (as accountService) Create(a Account) (Account, error) {
-	if a.Uuid == "" {
-		a.Uuid = uuid.NewV4().String()
+	if a.UUID == "" {
+		a.UUID = uuid.NewV4().String()
 	}
 
 	return a, as.saveAccount(a)

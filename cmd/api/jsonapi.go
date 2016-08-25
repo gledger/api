@@ -1,17 +1,17 @@
 package main
 
-type jsonApiDocument struct {
+type jsonAPIDocument struct {
 	Data interface{} `json:"data"`
 }
 
-type jsonApiTransactionResource struct {
+type jsonAPITransactionResource struct {
 	Type          string                               `json:"type"`
-	Id            string                               `json:"id"`
-	Attributes    jsonApiTransactionResourceAttributes `json:"attributes"`
-	Relationships jsonApiTransactionsRelationships     `json:"relationships"`
+	ID            string                               `json:"id"`
+	Attributes    jsonAPITransactionResourceAttributes `json:"attributes"`
+	Relationships jsonAPITransactionsRelationships     `json:"relationships"`
 }
 
-type jsonApiTransactionResourceAttributes struct {
+type jsonAPITransactionResourceAttributes struct {
 	Payee        string `json:"payee"`
 	Amount       int64  `json:"amount"`
 	RollingTotal int64  `json:"rolling_total"`
@@ -20,28 +20,28 @@ type jsonApiTransactionResourceAttributes struct {
 	Reconciled   bool   `json:"reconciled"`
 }
 
-type jsonApiAccountResource struct {
+type jsonAPIAccountResource struct {
 	Type          string                               `json:"type"`
-	Id            string                               `json:"id"`
-	Attributes    *jsonApiAccountResourceAttributes    `json:"attributes,omitempty"`
-	Relationships *jsonApiAccountResourceRelationships `json:"relationships,omitempty"`
+	ID            string                               `json:"id"`
+	Attributes    *jsonAPIAccountResourceAttributes    `json:"attributes,omitempty"`
+	Relationships *jsonAPIAccountResourceRelationships `json:"relationships,omitempty"`
 }
 
-type jsonApiAccountResourceAttributes struct {
+type jsonAPIAccountResourceAttributes struct {
 	Name    string `json:"name"`
 	Type    string `json:"type"`
 	Active  bool   `json:"active"`
 	Balance int64  `json:"balance"`
 }
 
-type jsonApiTransactionsRelationships struct {
-	Account jsonApiTransactionsRelationshipsAccount `json:"account"`
+type jsonAPITransactionsRelationships struct {
+	Account jsonAPITransactionsRelationshipsAccount `json:"account"`
 }
 
-type jsonApiAccountResourceRelationships struct {
+type jsonAPIAccountResourceRelationships struct {
 	Transactions map[string]map[string]string `json:"transactions"`
 }
 
-type jsonApiTransactionsRelationshipsAccount struct {
-	Data jsonApiAccountResource `json:"data"`
+type jsonAPITransactionsRelationshipsAccount struct {
+	Data jsonAPIAccountResource `json:"data"`
 }

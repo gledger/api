@@ -7,7 +7,7 @@ import (
 )
 
 type Transaction struct {
-	Uuid, AccountUuid, Payee string
+	UUID, AccountUUID, Payee string
 	OccurredAt               time.Time
 	Amount, RollingTotal     int64
 	Cleared, Reconciled      bool
@@ -31,8 +31,8 @@ type transactionService struct {
 }
 
 func (ts transactionService) Create(t Transaction) (Transaction, error) {
-	if t.Uuid == "" {
-		t.Uuid = uuid.NewV4().String()
+	if t.UUID == "" {
+		t.UUID = uuid.NewV4().String()
 	}
 
 	return t, ts.saveTransaction(t)

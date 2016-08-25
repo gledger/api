@@ -13,7 +13,7 @@ func Test_TransactionCreateAssignsUuid_IfNotExists(t *testing.T) {
 	saveErr := errors.New("boom")
 	saveTransaction := func(txn Transaction) error {
 		assert.Equal(t, a.Payee, txn.Payee)
-		assert.NotEmpty(t, txn.Uuid)
+		assert.NotEmpty(t, txn.UUID)
 		saveCalled = true
 		return saveErr
 	}

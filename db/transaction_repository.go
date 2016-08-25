@@ -14,12 +14,12 @@ func SaveTransaction(db *sql.DB) func(gledger.Transaction) error {
 	return func(t gledger.Transaction) error {
 		_, err := db.Exec(
 			`INSERT INTO transactions VALUES ($1, $2, $3, $4, $5, $6, $7, now(), now())`,
-			t.Uuid, t.AccountUuid, t.OccurredAt, t.Payee, t.Amount, t.Cleared, t.Reconciled,
+			t.UUID, t.AccountUUID, t.OccurredAt, t.Payee, t.Amount, t.Cleared, t.Reconciled,
 		)
 
 		if pqErr, ok := err.(*pq.Error); ok {
 			if pqErr.Code == ForeignKeyViolation {
-				return notFoundError(fmt.Sprintf("Account %s not found", t.AccountUuid))
+				return notFoundError(fmt.Sprintf("Account %s not found", t.AccountUUID))
 			}
 		}
 
@@ -57,7 +57,7 @@ func TransactionsForAccount(db *sql.DB) func(string) ([]gledger.Transaction, err
 
 		for rows.Next() {
 			var t gledger.Transaction
-			err := rows.Scan(&t.Uuid, &t.AccountUuid, &t.OccurredAt, &t.Payee, &t.Amount, &t.RollingTotal, &t.Cleared, &t.Reconciled)
+			err := rows.Scan(&t.UUID, &t.AccountUUID, &t.OccurredAt, &t.Payee, &t.Amount, &t.RollingTotal, &t.Cleared, &t.Reconciled)
 			if err != nil {
 				return transactions, errors.Wrapf(err, "error scanning getting transactions for %s", u)
 			}
