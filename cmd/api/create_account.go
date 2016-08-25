@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/go-kit/kit/endpoint"
@@ -42,5 +43,14 @@ func decodeCreateAccountRequest(_ context.Context, r *http.Request) (interface{}
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return nil, err
 	}
+
+	if request.Data.Attributes == nil {
+		return nil, errors.New("attributes are required")
+	} else if request.Data.Attributes.Name == "" {
+		return nil, errors.New("name attribute is required")
+	} else if request.Data.Attributes.Type == "" {
+		return nil, errors.New("type attribute is required")
+	}
+
 	return request, nil
 }
