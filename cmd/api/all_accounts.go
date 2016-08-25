@@ -18,9 +18,10 @@ func makeAllAccountsEndpoint(svc gledger.AccountService) endpoint.Endpoint {
 				Type: "accounts",
 				Id:   a.Uuid,
 				Attributes: &jsonApiAccountResourceAttributes{
-					Name:   a.Name,
-					Type:   a.Type,
-					Active: a.Active,
+					Name:    a.Name,
+					Type:    a.Type,
+					Active:  a.Active,
+					Balance: a.Balance,
 				},
 			}
 		}

@@ -1,4 +1,14 @@
 run:
 	go run cmd/api/*.go
 
-.PHONY: run
+test:
+	go test -v .
+	go test -v ./cmd/api
+	go test -v ./db
+
+lint:
+	golint .
+	golint ./cmd/api
+	golint ./db
+
+.PHONY: run lint test

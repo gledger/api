@@ -4,6 +4,7 @@ import "github.com/twinj/uuid"
 
 type Account struct {
 	Uuid, Name, Type string
+	Balance          int64
 	Active           bool
 }
 
