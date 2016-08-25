@@ -14,8 +14,8 @@ import (
 	"github.com/rs/cors"
 	"golang.org/x/net/context"
 
-	"github.com/zombor/gledger"
-	"github.com/zombor/gledger/db"
+	"github.com/gledger/api"
+	"github.com/gledger/api/db"
 )
 
 func main() {

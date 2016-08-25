@@ -3,9 +3,8 @@ package db
 import (
 	"database/sql"
 
+	"github.com/gledger/api"
 	"github.com/pkg/errors"
-
-	"github.com/zombor/gledger"
 )
 
 func SaveAccount(db *sql.DB) func(gledger.Account) error {

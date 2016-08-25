@@ -7,7 +7,7 @@ import (
 	"github.com/lib/pq"
 	"github.com/pkg/errors"
 
-	"github.com/zombor/gledger"
+	"github.com/gledger/api"
 )
 
 func SaveTransaction(db *sql.DB) func(gledger.Transaction) error {

@@ -8,7 +8,7 @@ import (
 	"github.com/go-kit/kit/endpoint"
 	"golang.org/x/net/context"
 
-	"github.com/zombor/gledger"
+	"github.com/gledger/api"
 )
 
 func makeCreateAccountEndpoint(svc gledger.AccountService) endpoint.Endpoint {

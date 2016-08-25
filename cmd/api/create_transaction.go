@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"golang.org/x/net/context"
 
-	"github.com/zombor/gledger"
+	"github.com/gledger/api"
 )
 
 func makeCreateTransactionEndpoint(svc gledger.TransactionService) endpoint.Endpoint {

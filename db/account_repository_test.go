@@ -5,9 +5,9 @@ import (
 	"os"
 	"testing"
 
+	"github.com/gledger/api"
 	_ "github.com/lib/pq"
 	"github.com/twinj/uuid"
-	"github.com/zombor/gledger"
 
 	"github.com/stretchr/testify/suite"
 )

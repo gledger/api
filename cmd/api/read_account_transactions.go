@@ -3,9 +3,9 @@ package main
 import (
 	"net/http"
 
+	"github.com/gledger/api"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/gorilla/mux"
-	"github.com/zombor/gledger"
 	"golang.org/x/net/context"
 )
 
