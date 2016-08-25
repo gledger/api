@@ -12,14 +12,14 @@ import (
 func makeReadAccountTransactionsEndpoint(svc gledger.TransactionService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(readAccountTransactionsRequest)
-		ts, err := svc.AllForAccount(req.AccountUuid)
+		ts, err := svc.AllForAccount(req.AccountUUID)
 
-		res := make([]jsonApiTransactionResource, len(ts), len(ts))
+		res := make([]jsonAPITransactionResource, len(ts), len(ts))
 		for i, t := range ts {
-			res[i] = jsonApiTransactionResource{
-				Id:   t.Uuid,
+			res[i] = jsonAPITransactionResource{
+				ID:   t.UUID,
 				Type: "transactions",
-				Attributes: jsonApiTransactionResourceAttributes{
+				Attributes: jsonAPITransactionResourceAttributes{
 					Payee:        t.Payee,
 					Amount:       t.Amount,
 					RollingTotal: t.RollingTotal,
@@ -27,27 +27,27 @@ func makeReadAccountTransactionsEndpoint(svc gledger.TransactionService) endpoin
 					Cleared:      t.Cleared,
 					Reconciled:   t.Reconciled,
 				},
-				Relationships: jsonApiTransactionsRelationships{
-					Account: jsonApiTransactionsRelationshipsAccount{
-						Data: jsonApiAccountResource{
+				Relationships: jsonAPITransactionsRelationships{
+					Account: jsonAPITransactionsRelationshipsAccount{
+						Data: jsonAPIAccountResource{
 							Type: "accounts",
-							Id:   t.AccountUuid,
+							ID:   t.AccountUUID,
 						},
 					},
 				},
 			}
 		}
 
-		return jsonApiDocument{Data: res}, err
+		return jsonAPIDocument{Data: res}, err
 	}
 }
 
 type readAccountTransactionsRequest struct {
-	AccountUuid string
+	AccountUUID string
 }
 
 func decodeReadAccountTransactionsRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	return readAccountTransactionsRequest{
-		AccountUuid: mux.Vars(r)["uuid"],
+		AccountUUID: mux.Vars(r)["uuid"],
 	}, nil
 }

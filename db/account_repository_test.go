@@ -38,7 +38,7 @@ func (s *AccountRepositorySuite) Test_ReadAccount() {
 	a, err := ReadAccount(s.db)(u)
 	s.NoError(err)
 	s.Equal(gledger.Account{
-		Uuid:    u,
+		UUID:    u,
 		Name:    "name",
 		Type:    "type",
 		Active:  true,
@@ -55,7 +55,7 @@ func (s *AccountRepositorySuite) Test_ReadAccount_WithTransactions() {
 	a, err := ReadAccount(s.db)(u)
 	s.NoError(err)
 	s.Equal(gledger.Account{
-		Uuid:    u,
+		UUID:    u,
 		Name:    "name",
 		Type:    "type",
 		Active:  true,
@@ -70,7 +70,7 @@ func (s *AccountRepositorySuite) Test_AllAccounts() {
 	as, err := AllAccounts(s.db)()
 	s.NoError(err)
 	s.Equal([]gledger.Account{gledger.Account{
-		Uuid:    u,
+		UUID:    u,
 		Name:    "name",
 		Type:    "type",
 		Active:  true,
@@ -87,7 +87,7 @@ func (s *AccountRepositorySuite) Test_AllAccounts_WithTransactions() {
 	as, err := AllAccounts(s.db)()
 	s.NoError(err)
 	s.Equal([]gledger.Account{gledger.Account{
-		Uuid:    u,
+		UUID:    u,
 		Name:    "name",
 		Type:    "type",
 		Active:  true,

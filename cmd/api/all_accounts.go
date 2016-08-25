@@ -11,13 +11,13 @@ func makeAllAccountsEndpoint(svc gledger.AccountService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		as, err := svc.All()
 
-		res := make([]jsonApiAccountResource, len(as), len(as))
+		res := make([]jsonAPIAccountResource, len(as), len(as))
 
 		for i, a := range as {
-			res[i] = jsonApiAccountResource{
+			res[i] = jsonAPIAccountResource{
 				Type: "accounts",
-				Id:   a.Uuid,
-				Attributes: &jsonApiAccountResourceAttributes{
+				ID:   a.UUID,
+				Attributes: &jsonAPIAccountResourceAttributes{
 					Name:    a.Name,
 					Type:    a.Type,
 					Active:  a.Active,
@@ -26,7 +26,7 @@ func makeAllAccountsEndpoint(svc gledger.AccountService) endpoint.Endpoint {
 			}
 		}
 
-		return jsonApiDocument{
+		return jsonAPIDocument{
 			Data: res,
 		}, err
 	}

@@ -10,7 +10,7 @@ import (
 
 func SaveAccount(db *sql.DB) func(gledger.Account) error {
 	return func(a gledger.Account) error {
-		_, err := db.Exec(`INSERT INTO accounts VALUES ($1, $2, $3, $4, now(), now())`, a.Uuid, a.Name, a.Type, a.Active)
+		_, err := db.Exec(`INSERT INTO accounts VALUES ($1, $2, $3, $4, now(), now())`, a.UUID, a.Name, a.Type, a.Active)
 		return errors.Wrap(err, "error writing account")
 	}
 }
@@ -34,7 +34,7 @@ func AllAccounts(db *sql.DB) func() ([]gledger.Account, error) {
 		for rows.Next() {
 			var a gledger.Account
 			var b sql.NullInt64
-			err := rows.Scan(&a.Uuid, &a.Name, &a.Type, &a.Active, &b)
+			err := rows.Scan(&a.UUID, &a.Name, &a.Type, &a.Active, &b)
 			if err != nil {
 				return accounts, errors.Wrap(err, "error scanning all accounts")
 			}
@@ -64,7 +64,7 @@ func ReadAccount(db *sql.DB) func(string) (gledger.Account, error) {
 			GROUP BY accounts.account_uuid`,
 			uuid,
 		).Scan(
-			&account.Uuid,
+			&account.UUID,
 			&account.Name,
 			&account.Type,
 			&account.Active,

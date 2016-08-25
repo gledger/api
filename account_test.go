@@ -13,7 +13,7 @@ func Test_CreateAssignsUuid_IfNotExists(t *testing.T) {
 	saveErr := errors.New("boom")
 	saveAccount := func(act Account) error {
 		assert.Equal(t, a.Name, act.Name)
-		assert.NotEmpty(t, act.Uuid)
+		assert.NotEmpty(t, act.UUID)
 		saveCalled = true
 		return saveErr
 	}

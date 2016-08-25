@@ -1,10 +1,15 @@
 run:
 	go run cmd/api/*.go
 
-test:
-	go test -v .
-	go test -v ./cmd/api
-	go test -v ./db
+test: vet
+	@go test -v .
+	@go test -v ./cmd/api
+	@go test -v ./db
+
+vet:
+	@go vet .
+	@go vet ./cmd/api
+	@go vet ./db
 
 lint:
 	golint .

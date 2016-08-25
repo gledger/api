@@ -13,22 +13,22 @@ import (
 func makeReadAccountEndpoint(svc gledger.AccountService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(readAccountRequest)
-		a, err := svc.Read(req.AccountUuid)
+		a, err := svc.Read(req.AccountUUID)
 
-		return jsonApiDocument{
-			Data: jsonApiAccountResource{
+		return jsonAPIDocument{
+			Data: jsonAPIAccountResource{
 				Type: "accounts",
-				Id:   a.Uuid,
-				Attributes: &jsonApiAccountResourceAttributes{
+				ID:   a.UUID,
+				Attributes: &jsonAPIAccountResourceAttributes{
 					Name:    a.Name,
 					Type:    a.Type,
 					Active:  a.Active,
 					Balance: a.Balance,
 				},
-				Relationships: &jsonApiAccountResourceRelationships{
+				Relationships: &jsonAPIAccountResourceRelationships{
 					Transactions: map[string]map[string]string{
 						"links": map[string]string{
-							"related": fmt.Sprintf("/accounts/%s/transactions", a.Uuid),
+							"related": fmt.Sprintf("/accounts/%s/transactions", a.UUID),
 						},
 					},
 				},
@@ -38,11 +38,11 @@ func makeReadAccountEndpoint(svc gledger.AccountService) endpoint.Endpoint {
 }
 
 type readAccountRequest struct {
-	AccountUuid string
+	AccountUUID string
 }
 
 func decodeReadAccountRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	return readAccountRequest{
-		AccountUuid: mux.Vars(r)["uuid"],
+		AccountUUID: mux.Vars(r)["uuid"],
 	}, nil
 }

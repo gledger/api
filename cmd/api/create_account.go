@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/go-kit/kit/endpoint"
@@ -19,11 +20,11 @@ func makeCreateAccountEndpoint(svc gledger.AccountService) endpoint.Endpoint {
 			Active: true,
 		})
 
-		return jsonApiDocument{
-			Data: jsonApiAccountResource{
+		return jsonAPIDocument{
+			Data: jsonAPIAccountResource{
 				Type: "accounts",
-				Id:   a.Uuid,
-				Attributes: &jsonApiAccountResourceAttributes{
+				ID:   a.UUID,
+				Attributes: &jsonAPIAccountResourceAttributes{
 					Name:   a.Name,
 					Type:   a.Type,
 					Active: a.Active,
@@ -34,7 +35,7 @@ func makeCreateAccountEndpoint(svc gledger.AccountService) endpoint.Endpoint {
 }
 
 type createAccountRequest struct {
-	Data jsonApiAccountResource `json:"data"`
+	Data jsonAPIAccountResource `json:"data"`
 }
 
 func decodeCreateAccountRequest(_ context.Context, r *http.Request) (interface{}, error) {
@@ -42,5 +43,14 @@ func decodeCreateAccountRequest(_ context.Context, r *http.Request) (interface{}
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return nil, err
 	}
+
+	if request.Data.Attributes == nil {
+		return nil, errors.New("attributes are required")
+	} else if request.Data.Attributes.Name == "" {
+		return nil, errors.New("name attribute is required")
+	} else if request.Data.Attributes.Type == "" {
+		return nil, errors.New("type attribute is required")
+	}
+
 	return request, nil
 }
