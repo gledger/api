@@ -1,5 +1,6 @@
 run:
-	go run cmd/api/*.go
+	go build github.com/gledger/api/cmd/api
+	./api
 
 test: vet
 	@go test -v .
