@@ -1,0 +1,11 @@
+database:
+  override:
+    - wget https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/4.0.3/flyway-commandline-4.0.3-linux-x64.tar.gz
+    - tar -zxvf flyway-commandline-4.0.3-linux-x64.tar.gz
+    - git clone https://github.com/gledger/api-schema.git
+    - cp api-schema/sql/*.sql flyway-4.0.3/sql/
+    - ./flyway-4.0.3/flyway -user=ubuntu -password= -url="jdbc:postgresql://127.0.0.1:5432/circle_test" migrate
+
+machine:
+  environment:
+    DATABASE_URL: postgres://ubuntu:@127.0.0.1:5432/circle_test
