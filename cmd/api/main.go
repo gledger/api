@@ -44,6 +44,10 @@ func main() {
 		db.SaveTransaction(pg),
 		db.TransactionsForAccount(pg),
 	)
+	envSvc := gledger.NewEnvelopeService(
+		db.SaveEnvelope(pg.Exec),
+		db.AllEnvelopes(pg.Query),
+	)
 
 	httpOptions := []httptransport.ServerOption{httptransport.ServerErrorEncoder(errorEncoder)}
 
@@ -95,6 +99,27 @@ func main() {
 			ctx,
 			makeReadAccountTransactionsEndpoint(txnSvc),
 			decodeReadAccountTransactionsRequest,
+			encodeResponse,
+			httpOptions...,
+		).ServeHTTP,
+	).Methods("GET")
+
+	router.HandleFunc(
+		"/envelopes",
+		httptransport.NewServer(
+			ctx,
+			makeCreateEnvelopeEndpoint(envSvc),
+			decodeCreateEnvelopeRequest,
+			created(encodeResponse),
+			httpOptions...,
+		).ServeHTTP,
+	).Methods("POST")
+	router.HandleFunc(
+		"/envelopes",
+		httptransport.NewServer(
+			ctx,
+			makeAllEnvelopesEndpoint(envSvc),
+			emptyRequest,
 			encodeResponse,
 			httpOptions...,
 		).ServeHTTP,

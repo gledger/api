@@ -45,3 +45,14 @@ type jsonAPIAccountResourceRelationships struct {
 type jsonAPITransactionsRelationshipsAccount struct {
 	Data jsonAPIAccountResource `json:"data"`
 }
+
+type jsonAPIEnvelopeResource struct {
+	Type       string                             `json:"type"`
+	ID         string                             `json:"id"`
+	Attributes *jsonAPIEnvelopeResourceAttributes `json:"attributes,omitempty"`
+}
+
+type jsonAPIEnvelopeResourceAttributes struct {
+	Name    string `json:"name"`
+	Balance int64  `json:"balance"`
+}
