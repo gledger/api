@@ -114,7 +114,7 @@ func main() {
 			httpOptions...,
 		).ServeHTTP,
 	).Methods("POST")
-	/*router.HandleFunc(
+	router.HandleFunc(
 		"/envelopes",
 		httptransport.NewServer(
 			ctx,
@@ -123,7 +123,7 @@ func main() {
 			encodeResponse,
 			httpOptions...,
 		).ServeHTTP,
-	).Methods("GET")*/
+	).Methods("GET")
 
 	handler := cors.New(cors.Options{
 		AllowedOrigins: []string{"http://localhost:4200", "https://gledger-web.herokuapp.com"},
