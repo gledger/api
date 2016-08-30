@@ -16,6 +16,7 @@ func makeCreateEnvelopeEndpoint(svc gledger.EnvelopeService) endpoint.Endpoint {
 		req := request.(createEnvelopeRequest)
 		e, err := svc.Create(gledger.Envelope{
 			Name: req.Data.Attributes.Name,
+			Type: req.Data.Attributes.Type,
 		})
 
 		return jsonAPIDocument{
@@ -24,6 +25,7 @@ func makeCreateEnvelopeEndpoint(svc gledger.EnvelopeService) endpoint.Endpoint {
 				ID:   e.UUID,
 				Attributes: &jsonAPIEnvelopeResourceAttributes{
 					Name:    e.Name,
+					Type:    e.Type,
 					Balance: e.Balance,
 				},
 			},
@@ -45,6 +47,10 @@ func decodeCreateEnvelopeRequest(_ context.Context, r *http.Request) (interface{
 		return nil, errors.New("attributes are required")
 	} else if request.Data.Attributes.Name == "" {
 		return nil, errors.New("name attribute is required")
+	} else if request.Data.Attributes.Type == "" {
+		return nil, errors.New("type attribute is required")
+	} else if request.Data.Attributes.Type != "income" && request.Data.Attributes.Type != "expense" {
+		return nil, errors.New("type attribute must be one of: income, expense")
 	}
 
 	return request, nil

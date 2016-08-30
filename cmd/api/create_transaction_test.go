@@ -16,7 +16,7 @@ func Test_decodeCreateTransactionRequest_ReturnsRequestData(t *testing.T) {
 	req, _ := http.NewRequest(
 		"GET", "/",
 		bytes.NewBufferString(
-			`{"data":{"type":"transactions","attributes":{"payee":"Test Payee","amount":1,"occurred_at":"2016-08-25"}}}`,
+			`{"data":{"type":"transactions","attributes":{"payee":"Test Payee","amount":1,"occurred_at":"2016-08-25"},"relationships":{"envelope":{"data":{"id":"foo"}}}}}`,
 		),
 	)
 
@@ -26,6 +26,7 @@ func Test_decodeCreateTransactionRequest_ReturnsRequestData(t *testing.T) {
 		assert.Equal(t, "Test Payee", r.Data.Attributes.Payee)
 		assert.Equal(t, int64(1), r.Data.Attributes.Amount)
 		assert.Equal(t, Date(time.Date(2016, 8, 25, 0, 0, 0, 0, time.UTC)), r.Data.Attributes.OccurredAt)
+		assert.Equal(t, "foo", r.Data.Relationships.Envelope.Data.ID)
 	}
 }
 

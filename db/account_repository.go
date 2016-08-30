@@ -7,18 +7,18 @@ import (
 	"github.com/pkg/errors"
 )
 
-func SaveAccount(db *sql.DB) func(gledger.Account) error {
+func SaveAccount(exec func(query string, args ...interface{}) (sql.Result, error)) func(gledger.Account) error {
 	return func(a gledger.Account) error {
-		_, err := db.Exec(`INSERT INTO accounts VALUES ($1, $2, $3, $4, now(), now())`, a.UUID, a.Name, a.Type, a.Active)
+		_, err := exec(`INSERT INTO accounts VALUES ($1, $2, $3, $4, now(), now())`, a.UUID, a.Name, a.Type, a.Active)
 		return errors.Wrap(err, "error writing account")
 	}
 }
 
-func AllAccounts(db *sql.DB) func() ([]gledger.Account, error) {
+func AllAccounts(query func(query string, args ...interface{}) (*sql.Rows, error)) func() ([]gledger.Account, error) {
 	return func() ([]gledger.Account, error) {
 		var accounts []gledger.Account
 
-		rows, err := db.Query(
+		rows, err := query(
 			`SELECT
 				account_uuid, name, type, active, sum(transactions.amount)
 			FROM accounts
@@ -49,12 +49,12 @@ func AllAccounts(db *sql.DB) func() ([]gledger.Account, error) {
 	}
 }
 
-func ReadAccount(db *sql.DB) func(string) (gledger.Account, error) {
+func ReadAccount(queryRow func(string, ...interface{}) *sql.Row) func(string) (gledger.Account, error) {
 	return func(uuid string) (gledger.Account, error) {
 		var account gledger.Account
 		var b sql.NullInt64
 
-		err := db.QueryRow(
+		err := queryRow(
 			`SELECT
 				account_uuid, name, type, active, sum(transactions.amount)
 			FROM accounts

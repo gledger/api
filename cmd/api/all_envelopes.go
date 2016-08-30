@@ -19,6 +19,7 @@ func makeAllEnvelopesEndpoint(svc gledger.EnvelopeService) endpoint.Endpoint {
 				ID:   e.UUID,
 				Attributes: &jsonAPIEnvelopeResourceAttributes{
 					Name:    e.Name,
+					Type:    e.Type,
 					Balance: e.Balance,
 				},
 			}
