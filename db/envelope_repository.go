@@ -18,7 +18,12 @@ func SaveEnvelope(exec func(query string, args ...interface{}) (sql.Result, erro
 
 func AllEnvelopes(query func(query string, args ...interface{}) (*sql.Rows, error)) func() ([]gledger.Envelope, error) {
 	return func() (es []gledger.Envelope, err error) {
-		rows, err := query(`SELECT envelope_uuid, name, type FROM envelopes`)
+		rows, err := query(
+			`SELECT envelopes.envelope_uuid, envelopes.name, envelopes.type, coalesce(sum(amount), 0)
+				FROM envelopes
+				LEFT JOIN transactions using(envelope_uuid)
+				GROUP BY envelopes.envelope_uuid, envelopes.name, envelopes.type`,
+		)
 		if err != nil {
 			return
 		}
@@ -26,7 +31,7 @@ func AllEnvelopes(query func(query string, args ...interface{}) (*sql.Rows, erro
 
 		for rows.Next() {
 			var e gledger.Envelope
-			err = rows.Scan(&e.UUID, &e.Name, &e.Type)
+			err = rows.Scan(&e.UUID, &e.Name, &e.Type, &e.Balance)
 			if err != nil {
 				return
 			}
