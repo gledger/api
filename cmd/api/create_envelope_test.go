@@ -14,7 +14,7 @@ func Test_decodeCreateEnvelopeRequest_ReturnsRequestData(t *testing.T) {
 	req, _ := http.NewRequest(
 		"GET", "/",
 		bytes.NewBufferString(
-			`{"data":{"type":"envelopes","attributes":{"name":"Test Name","type":"Test Type","active":true}}}`,
+			`{"data":{"type":"envelopes","attributes":{"name":"Test Name","type":"income"}}}`,
 		),
 	)
 
@@ -39,7 +39,9 @@ func Test_decodeCreateEnvelopeRequest_ErrorsWithMissingAttributes(t *testing.T) 
 
 func Test_decodeCreateEnvelopeRequest_ErrorsWithMissingData(t *testing.T) {
 	for _, e := range []string{
-		`{"name":"",}`,
+		`{"name":"","type":"income"}`,
+		`{"name":"test","type":""}`,
+		`{"name":"test","type":"foo"}`,
 	} {
 		req, _ := http.NewRequest(
 			"GET", "/",

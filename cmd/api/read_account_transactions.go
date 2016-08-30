@@ -34,6 +34,12 @@ func makeReadAccountTransactionsEndpoint(svc gledger.TransactionService) endpoin
 							ID:   t.AccountUUID,
 						},
 					},
+					Envelope: jsonAPITransactionsRelationshipsEnvelope{
+						Data: jsonAPIEnvelopeResource{
+							Type: "Envelopes",
+							ID:   t.EnvelopeUUID,
+						},
+					},
 				},
 			}
 		}

@@ -7,10 +7,11 @@ import (
 )
 
 type Transaction struct {
-	UUID, AccountUUID, Payee string
-	OccurredAt               time.Time
-	Amount, RollingTotal     int64
-	Cleared, Reconciled      bool
+	UUID, AccountUUID    string
+	Payee, EnvelopeUUID  string
+	OccurredAt           time.Time
+	Amount, RollingTotal int64
+	Cleared, Reconciled  bool
 }
 
 type TransactionService interface {

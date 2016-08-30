@@ -3,8 +3,8 @@ package gledger
 import "github.com/twinj/uuid"
 
 type Envelope struct {
-	UUID, Name string
-	Balance    int64
+	UUID, Name, Type string
+	Balance          int64
 }
 
 type EnvelopeService interface {

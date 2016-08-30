@@ -17,11 +17,12 @@ func makeCreateTransactionEndpoint(svc gledger.TransactionService) endpoint.Endp
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		if req, ok := request.(createTransactionRequest); ok {
 			t, err := svc.Create(gledger.Transaction{
-				AccountUUID: req.Data.Relationships.Account.Data.ID,
-				OccurredAt:  time.Time(req.Data.Attributes.OccurredAt),
-				Payee:       req.Data.Attributes.Payee,
-				Amount:      req.Data.Attributes.Amount,
-				Cleared:     req.Data.Attributes.Cleared,
+				AccountUUID:  req.Data.Relationships.Account.Data.ID,
+				EnvelopeUUID: req.Data.Relationships.Envelope.Data.ID,
+				OccurredAt:   time.Time(req.Data.Attributes.OccurredAt),
+				Payee:        req.Data.Attributes.Payee,
+				Amount:       req.Data.Attributes.Amount,
+				Cleared:      req.Data.Attributes.Cleared,
 			})
 
 			return jsonAPIDocument{
@@ -40,6 +41,12 @@ func makeCreateTransactionEndpoint(svc gledger.TransactionService) endpoint.Endp
 							Data: jsonAPIAccountResource{
 								Type: "accounts",
 								ID:   t.AccountUUID,
+							},
+						},
+						Envelope: jsonAPITransactionsRelationshipsEnvelope{
+							Data: jsonAPIEnvelopeResource{
+								Type: "Envelopes",
+								ID:   t.EnvelopeUUID,
 							},
 						},
 					},
@@ -72,6 +79,9 @@ func decodeCreateTransactionRequest(_ context.Context, r *http.Request) (interfa
 	}
 	if request.Data.Attributes.OccurredAt == Date(time.Time{}) {
 		return request, errors.New("OccurredAt is required")
+	}
+	if request.Data.Relationships.Envelope.Data.ID == "" {
+		return request, errors.New("`envelope` relationship `id` is required")
 	}
 
 	return request, nil

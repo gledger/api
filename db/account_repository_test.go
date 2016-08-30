@@ -16,26 +16,14 @@ type AccountRepositorySuite struct {
 	suite.Suite
 
 	db *sql.DB
-}
-
-func (s *AccountRepositorySuite) SetupSuite() {
-	pg, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
-	s.Require().NoError(err)
-	s.db = pg
-	_, err = s.db.Exec(`TRUNCATE accounts CASCADE`)
-	s.Require().NoError(err)
-}
-
-func (s *AccountRepositorySuite) SetupTest() {
-	_, err := s.db.Exec(`TRUNCATE accounts CASCADE`)
-	s.Require().NoError(err)
+	tx *sql.Tx
 }
 
 func (s *AccountRepositorySuite) Test_ReadAccount() {
 	u := uuid.NewV4().String()
-	s.db.Exec(`INSERT INTO accounts VALUES ($1, 'name', 'type', 't', now(), now())`, u)
+	s.mustExec(`INSERT INTO accounts VALUES ($1, 'name', 'type', 't', now(), now())`, u)
 
-	a, err := ReadAccount(s.db)(u)
+	a, err := ReadAccount(s.tx.QueryRow)(u)
 	s.NoError(err)
 	s.Equal(gledger.Account{
 		UUID:    u,
@@ -48,11 +36,13 @@ func (s *AccountRepositorySuite) Test_ReadAccount() {
 
 func (s *AccountRepositorySuite) Test_ReadAccount_WithTransactions() {
 	u := uuid.NewV4().String()
-	s.db.Exec(`INSERT INTO accounts VALUES ($1, 'name', 'type', 't', now(), now())`, u)
-	s.db.Exec(`INSERT INTO transactions VALUES ($1, $2, now(), 'payee', 10, 'f', 'f', now(), now())`, uuid.NewV4(), u)
-	s.db.Exec(`INSERT INTO transactions VALUES ($1, $2, now(), 'payee', -5, 'f', 'f', now(), now())`, uuid.NewV4(), u)
+	eu := uuid.NewV4().String()
+	s.mustExec(`INSERT INTO accounts VALUES ($1, 'name', 'type', 't', now(), now())`, u)
+	s.mustExec(`INSERT INTO envelopes VALUES ($1, 'envelope name', now(), now(), 'expense')`, eu)
+	s.mustExec(`INSERT INTO transactions VALUES ($1, $2, now(), 'payee', 10, 'f', 'f', now(), now(), $3)`, uuid.NewV4(), u, eu)
+	s.mustExec(`INSERT INTO transactions VALUES ($1, $2, now(), 'payee', -5, 'f', 'f', now(), now(), $3)`, uuid.NewV4(), u, eu)
 
-	a, err := ReadAccount(s.db)(u)
+	a, err := ReadAccount(s.tx.QueryRow)(u)
 	s.NoError(err)
 	s.Equal(gledger.Account{
 		UUID:    u,
@@ -65,9 +55,9 @@ func (s *AccountRepositorySuite) Test_ReadAccount_WithTransactions() {
 
 func (s *AccountRepositorySuite) Test_AllAccounts() {
 	u := uuid.NewV4().String()
-	s.db.Exec(`INSERT INTO accounts VALUES ($1, 'name', 'type', 't', now(), now())`, u)
+	s.mustExec(`INSERT INTO accounts VALUES ($1, 'name', 'type', 't', now(), now())`, u)
 
-	as, err := AllAccounts(s.db)()
+	as, err := AllAccounts(s.tx.Query)()
 	s.NoError(err)
 	s.Equal([]gledger.Account{gledger.Account{
 		UUID:    u,
@@ -80,11 +70,13 @@ func (s *AccountRepositorySuite) Test_AllAccounts() {
 
 func (s *AccountRepositorySuite) Test_AllAccounts_WithTransactions() {
 	u := uuid.NewV4().String()
-	s.db.Exec(`INSERT INTO accounts VALUES ($1, 'name', 'type', 't', now(), now())`, u)
-	s.db.Exec(`INSERT INTO transactions VALUES ($1, $2, now(), 'payee', 10, 'f', 'f', now(), now())`, uuid.NewV4(), u)
-	s.db.Exec(`INSERT INTO transactions VALUES ($1, $2, now(), 'payee', -5, 'f', 'f', now(), now())`, uuid.NewV4(), u)
+	eu := uuid.NewV4().String()
+	s.mustExec(`INSERT INTO accounts VALUES ($1, 'name', 'type', 't', now(), now())`, u)
+	s.mustExec(`INSERT INTO envelopes VALUES ($1, 'envelope name', now(), now(), 'expense')`, eu)
+	s.mustExec(`INSERT INTO transactions VALUES ($1, $2, now(), 'payee', 10, 'f', 'f', now(), now(), $3)`, uuid.NewV4(), u, eu)
+	s.mustExec(`INSERT INTO transactions VALUES ($1, $2, now(), 'payee', -5, 'f', 'f', now(), now(), $3)`, uuid.NewV4(), u, eu)
 
-	as, err := AllAccounts(s.db)()
+	as, err := AllAccounts(s.tx.Query)()
 	s.NoError(err)
 	s.Equal([]gledger.Account{gledger.Account{
 		UUID:    u,
@@ -93,6 +85,28 @@ func (s *AccountRepositorySuite) Test_AllAccounts_WithTransactions() {
 		Active:  true,
 		Balance: 5,
 	}}, as)
+}
+
+func (s *AccountRepositorySuite) SetupSuite() {
+	pg, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	s.Require().NoError(err)
+	s.db = pg
+}
+
+func (s *AccountRepositorySuite) SetupTest() {
+	var err error
+	s.tx, err = s.db.Begin()
+	s.NoError(err)
+}
+
+func (s *AccountRepositorySuite) TearDownTest() {
+	err := s.tx.Rollback()
+	s.NoError(err)
+}
+
+func (s *AccountRepositorySuite) mustExec(query string, args ...interface{}) {
+	_, err := s.tx.Exec(query, args...)
+	s.NoError(err)
 }
 
 func Test_AccountRepository(t *testing.T) {

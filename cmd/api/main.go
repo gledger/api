@@ -36,9 +36,9 @@ func main() {
 
 	ctx := context.Background()
 	svc := gledger.NewAccountService(
-		db.SaveAccount(pg),
-		db.AllAccounts(pg),
-		db.ReadAccount(pg),
+		db.SaveAccount(pg.Exec),
+		db.AllAccounts(pg.Query),
+		db.ReadAccount(pg.QueryRow),
 	)
 	txnSvc := gledger.NewTransactionService(
 		db.SaveTransaction(pg),
