@@ -22,7 +22,8 @@ func AllEnvelopes(query func(query string, args ...interface{}) (*sql.Rows, erro
 			`SELECT envelopes.envelope_uuid, envelopes.name, envelopes.type, coalesce(sum(amount), 0)
 				FROM envelopes
 				LEFT JOIN transactions using(envelope_uuid)
-				GROUP BY envelopes.envelope_uuid, envelopes.name, envelopes.type`,
+				GROUP BY envelopes.envelope_uuid, envelopes.name, envelopes.type
+				ORDER BY envelopes.created_at ASC`,
 		)
 		if err != nil {
 			return
