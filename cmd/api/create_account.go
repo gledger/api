@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/go-kit/kit/endpoint"
@@ -28,6 +29,13 @@ func makeCreateAccountEndpoint(svc gledger.AccountService) endpoint.Endpoint {
 					Name:   a.Name,
 					Type:   a.Type,
 					Active: a.Active,
+				},
+				Relationships: &jsonAPIAccountResourceRelationships{
+					Transactions: map[string]map[string]string{
+						"links": map[string]string{
+							"self": fmt.Sprintf("/accounts/%s/transactions", a.UUID),
+						},
+					},
 				},
 			},
 		}, err
