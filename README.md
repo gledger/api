@@ -1,6 +1,6 @@
 # Gledger API
 
-![circleci status](https://circleci.com/gh/gledger/api.svg?style=shield)
+[![circleci status](https://circleci.com/gh/gledger/api.svg?style=shield)](https://circleci.com/gh/gledger/api)
 
 Gledger is a HTTP REST api for personal finance management. It provides transactions assigned to accounts and envelopes.
 
