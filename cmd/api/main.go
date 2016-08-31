@@ -83,7 +83,7 @@ func main() {
 		).ServeHTTP,
 	).Methods("GET")
 	router.HandleFunc(
-		"/accounts/{uuid}/transactions",
+		"/transactions",
 		httptransport.NewServer(
 			ctx,
 			makeCreateTransactionEndpoint(txnSvc),

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/go-kit/kit/endpoint"
 	"golang.org/x/net/context"
 
@@ -22,6 +24,13 @@ func makeAllAccountsEndpoint(svc gledger.AccountService) endpoint.Endpoint {
 					Type:    a.Type,
 					Active:  a.Active,
 					Balance: a.Balance,
+				},
+				Relationships: &jsonAPIAccountResourceRelationships{
+					Transactions: map[string]map[string]string{
+						"links": map[string]string{
+							"self": fmt.Sprintf("/accounts/%s/transactions", a.UUID),
+						},
+					},
 				},
 			}
 		}

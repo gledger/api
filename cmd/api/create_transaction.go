@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/go-kit/kit/endpoint"
-	"github.com/gorilla/mux"
 	"golang.org/x/net/context"
 
 	"github.com/gledger/api"
@@ -45,7 +44,7 @@ func makeCreateTransactionEndpoint(svc gledger.TransactionService) endpoint.Endp
 						},
 						Envelope: jsonAPITransactionsRelationshipsEnvelope{
 							Data: jsonAPIEnvelopeResource{
-								Type: "Envelopes",
+								Type: "envelopes",
 								ID:   t.EnvelopeUUID,
 							},
 						},
@@ -61,16 +60,13 @@ func makeCreateTransactionEndpoint(svc gledger.TransactionService) endpoint.Endp
 func decodeCreateTransactionRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request createTransactionRequest
 
-	vars := mux.Vars(r)
-
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return nil, err
 	}
 
-	request.Data.Type = "transactions"
-	request.Data.Relationships.Account.Data.ID = vars["uuid"]
-	request.Data.Relationships.Account.Data.Type = "accounts"
-
+	if request.Data.Type != "transactions" {
+		return request, errors.New("/data/type must be `transactions`")
+	}
 	if request.Data.Attributes.Payee == "" {
 		return request, errors.New("Payee is required")
 	}
@@ -79,6 +75,9 @@ func decodeCreateTransactionRequest(_ context.Context, r *http.Request) (interfa
 	}
 	if request.Data.Attributes.OccurredAt == Date(time.Time{}) {
 		return request, errors.New("OccurredAt is required")
+	}
+	if request.Data.Relationships.Account.Data.ID == "" {
+		return request, errors.New("`account` relationship `id` is required")
 	}
 	if request.Data.Relationships.Envelope.Data.ID == "" {
 		return request, errors.New("`envelope` relationship `id` is required")

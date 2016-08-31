@@ -16,7 +16,7 @@ func Test_decodeCreateTransactionRequest_ReturnsRequestData(t *testing.T) {
 	req, _ := http.NewRequest(
 		"GET", "/",
 		bytes.NewBufferString(
-			`{"data":{"type":"transactions","attributes":{"payee":"Test Payee","amount":1,"occurred_at":"2016-08-25"},"relationships":{"envelope":{"data":{"id":"foo"}}}}}`,
+			`{"data":{"type":"transactions","attributes":{"payee":"Test Payee","amount":1,"occurred_at":"2016-08-25"},"relationships":{"account":{"data":{"id":"account-id"}},"envelope":{"data":{"id":"foo"}}}}}`,
 		),
 	)
 
@@ -26,6 +26,7 @@ func Test_decodeCreateTransactionRequest_ReturnsRequestData(t *testing.T) {
 		assert.Equal(t, "Test Payee", r.Data.Attributes.Payee)
 		assert.Equal(t, int64(1), r.Data.Attributes.Amount)
 		assert.Equal(t, Date(time.Date(2016, 8, 25, 0, 0, 0, 0, time.UTC)), r.Data.Attributes.OccurredAt)
+		assert.Equal(t, "account-id", r.Data.Relationships.Account.Data.ID)
 		assert.Equal(t, "foo", r.Data.Relationships.Envelope.Data.ID)
 	}
 }
@@ -43,21 +44,22 @@ func Test_decodeCreateTransactionRequest_ErrorsWithMissingAttributes(t *testing.
 }
 
 func Test_decodeCreateTransactionRequest_ErrorsWithMissingData(t *testing.T) {
-	for _, e := range []string{
-		`{"payee":"","amount":1,"occurred_at":"2016-08-25"}`,
-		`{"payee":"Test Payee","amount":null,"occurred_at":"2016-08-25"}`,
-		`{"payee":"Test Payee","amount":"foo","occurred_at":"2016-08-25"}`,
-		`{"payee":"Test Payee","amount":1,"occurred_at":"foo"}`,
-		`{"payee":"Test Payee","amount":1,"occurred_at":null}`,
+	for attr, e := range map[string]string{
+		`{"payee":"","amount":1,"occurred_at":"2016-08-25"}`:               "Payee is required",
+		`{"payee":"Test Payee","amount":null,"occurred_at":"2016-08-25"}`:  "Amount is required",
+		`{"payee":"Test Payee","amount":"foo","occurred_at":"2016-08-25"}`: "json: cannot unmarshal string into Go value of type int64",
+		`{"payee":"Test Payee","amount":1,"occurred_at":"foo"}`:            "parsing time \"foo\" as \"2006-01-02\": cannot parse \"foo\" as \"2006\"",
+		`{"payee":"Test Payee","amount":1,"occurred_at":null}`:             "parsing time \"\" as \"2006-01-02\": cannot parse \"\" as \"2006\"",
 	} {
 		req, _ := http.NewRequest(
 			"GET", "/",
 			bytes.NewBufferString(
-				fmt.Sprintf(`{"data":{"attributes":%s}}`, e),
+				fmt.Sprintf(`{"data":{"type":"transactions","attributes":%s},"relationships":{"account":{"data":{"id":"account-id"}},"envelope":{"data":{"id":"foo"}}}}`, attr),
 			),
 		)
 
 		_, err := decodeCreateTransactionRequest(context.Background(), req)
 		assert.Error(t, err)
+		assert.Equal(t, e, err.Error())
 	}
 }
