@@ -49,10 +49,10 @@ func (s *EnvelopeRepositorySuite) Test_AllEnvelopes() {
 		Type: "expense",
 	}
 	s.mustExec(`INSERT INTO envelopes VALUES (
-		$1, $2, now(), now(), $3
+		$1, $2, '2016-08-30T00:00:00Z', now(), $3
 	)`, e1.UUID, e1.Name, e1.Type)
 	s.mustExec(`INSERT INTO envelopes VALUES (
-		$1, $2, now(), now(), $3
+		$1, $2, '2016-08-30T00:00:01Z', now(), $3
 	)`, e2.UUID, e2.Name, e2.Type)
 	s.mustExec(`INSERT INTO transactions VALUES ($1, $2, now(), 'payee', 10, 'f', 'f', now(), now(), $3)`, uuid.NewV4(), "cadd0722-6fd1-47ff-b390-b53307cc8c01", e1.UUID)
 
